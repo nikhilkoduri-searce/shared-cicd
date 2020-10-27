@@ -17,15 +17,32 @@ apiVersion: apps/v1
 metadata:
   name: app
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
   template:
+    metadata:
+      name: app
     spec:
-      serviceAccountName: golang-template-ksa
       containers:
       - name: app
+        image: app
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
         env:
-        # Required for Skaffold to detect runtime language
-        # https://skaffold.dev/docs/workflows/debug/#go
-        - name: GOTRACEBACK
-          value: single
         - name: ENVIRONMENT
-          value: dev
+          value: base
+        - name: LOG_LEVEL
+          value: info
+        readinessProbe:
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          httpGet:
+            path: /healthz
+            port: 8080
+        ports:
+        - name: http
+          containerPort: 8080
