@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: app
+        image: gcr.io/searce-anthos-lab/anthos-app
         resources:
           limits:
             memory: "512Mi"
